@@ -2,7 +2,7 @@ use crate::contact::Contact;
 
 pub struct EmailClientSettings<'a> {
     pub smtp_server: SmtpServerSettings<'a>,
-    pub email: EmailSettings<'a>,
+    pub email: EmailSettings,
 }
 
 pub struct SmtpServerSettings<'a> {
@@ -16,7 +16,7 @@ pub struct CredentialsSettings<'a> {
     pub password: &'a str,
 }
 
-pub struct EmailSettings<'a> {
-    pub from: Contact<'a>,
-    pub reply_to: Contact<'a>,
+pub struct EmailSettings {
+    pub from: Contact,
+    pub reply_to: Contact,
 }

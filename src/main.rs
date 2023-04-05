@@ -15,8 +15,8 @@ use smtp_test::{
 /// Sends a plain text email to yourself
 fn main() {
     let contact = Contact {
-        name: "Your name",
-        email: Email::parse("youremail@hotmail.com").unwrap(),
+        name: "Your name".to_string(),
+        email: Email::parse("youremail@hotmail.com".to_string()).unwrap(),
     };
     let email_settings = EmailSettings {
         from: contact.clone(),

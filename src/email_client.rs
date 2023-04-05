@@ -2,16 +2,13 @@ use lettre::{message::header::ContentType, Message, SmtpTransport, Transport};
 
 use crate::{contact::Contact, settings::EmailSettings};
 
-pub struct EmailClient<'a> {
-    email_settings: EmailSettings<'a>,
+pub struct EmailClient {
+    email_settings: EmailSettings,
     smtp_client: SmtpTransport,
 }
 
-impl EmailClient<'_> {
-    pub fn new<'a>(
-        email_settings: EmailSettings<'a>,
-        smtp_client: SmtpTransport,
-    ) -> EmailClient<'a> {
+impl EmailClient {
+    pub fn new<'a>(email_settings: EmailSettings, smtp_client: SmtpTransport) -> EmailClient {
         EmailClient {
             email_settings,
             smtp_client: smtp_client,
@@ -76,17 +73,14 @@ mod tests {
             .port(smtp_server_port)
             .timeout(Some(std::time::Duration::from_secs(10)))
             .build();
-        let temp_name = Username().fake::<String>();
-        let temp_email = SafeEmail().fake::<String>();
+
         let from = Contact {
-            name: temp_name.as_str(),
-            email: Email::parse(temp_email.as_str()).unwrap(),
+            name: Username().fake::<String>(),
+            email: Email::parse(SafeEmail().fake::<String>()).unwrap(),
         };
-        let temp_name = Username().fake::<String>();
-        let temp_email = SafeEmail().fake::<String>();
         let reply_to = Contact {
-            name: temp_name.as_str(),
-            email: Email::parse(temp_email.as_str()).unwrap(),
+            name: Username().fake::<String>(),
+            email: Email::parse(SafeEmail().fake::<String>()).unwrap(),
         };
         let email_settings = EmailSettings {
             from: from.clone(),
@@ -95,11 +89,9 @@ mod tests {
         let email_client = EmailClient::new(email_settings, smtp_client);
 
         // Email
-        let temp_name = Username().fake::<String>();
-        let temp_email = SafeEmail().fake::<String>();
         let recipient = Contact {
-            name: temp_name.as_str(),
-            email: Email::parse(temp_email.as_str()).unwrap(),
+            name: Username().fake::<String>(),
+            email: Email::parse(SafeEmail().fake::<String>()).unwrap(),
         };
         let subject: String = Sentence(1..2).fake();
         let text_content: String = Paragraph(1..2).fake();
