@@ -1,0 +1,18 @@
+[package]
+name = "smtp-test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+validator = "0.16"
+lettre = { version = "0.10", features=["smtp-transport"] }
+
+[dev-dependencies]
+claims = "0.7"
+rand = "0.8"
+fake = "2"
+socket-server-mocker = "0.0.4"
+quickcheck = "1"
+quickcheck_macros = "1"
