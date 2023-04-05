@@ -1,19 +1,19 @@
 use validator::validate_email;
 
 #[derive(Debug, Clone)]
-pub struct Email(String);
+pub struct Email<'a>(&'a str);
 
-impl Email {
-    pub fn parse(s: String) -> Result<Self, String> {
-        if validate_email(&s) {
-            Ok(Self(s))
+impl Email<'_> {
+    pub fn parse<'a>(s: &'a str) -> Result<Email, String> {
+        if validate_email(s) {
+            Ok(Email(s))
         } else {
-            Err(format!("{s} is not a valid subscriber email"))
+            Err(format!("{s} is not a valid email"))
         }
     }
 }
 
-impl AsRef<str> for Email {
+impl AsRef<str> for Email<'_> {
     fn as_ref(&self) -> &str {
         &self.0
     }
@@ -41,36 +41,31 @@ mod tests {
     #[quickcheck_macros::quickcheck]
     fn valid_emails_are_parsed_successfully(valid_email: ValidEmailFixture) -> bool {
         dbg!(&valid_email.0);
-        Email::parse(valid_email.0).is_ok()
+        Email::parse(valid_email.0.as_str()).is_ok()
     }
 
     #[test]
     fn email_with_whitespace_is_rejected() {
-        let email = "toto @test.com".to_string();
-        assert_err!(Email::parse(email));
+        assert_err!(Email::parse("toto @test.com"));
     }
 
     #[test]
     fn empty_string_is_rejected() {
-        let email = "".to_string();
-        assert_err!(Email::parse(email));
+        assert_err!(Email::parse(""));
     }
 
     #[test]
     fn email_missing_at_symbol_is_rejected() {
-        let email = "toto.domain.com".to_string();
-        assert_err!(Email::parse(email));
+        assert_err!(Email::parse("toto.domain.com"));
     }
 
     #[test]
     fn email_missing_subject_is_rejected() {
-        let email = "@domain.com".to_string();
-        assert_err!(Email::parse(email));
+        assert_err!(Email::parse("@domain.com"));
     }
 
     #[test]
     fn email_missing_domain_is_rejected() {
-        let email = "toto@".to_string();
-        assert_err!(Email::parse(email));
+        assert_err!(Email::parse("toto@"));
     }
 }
