@@ -35,7 +35,10 @@ impl EmailClient {
 
         match self.smtp_client.send(&email) {
             Ok(_) => Result::Ok(()),
-            Err(e) => Result::Err(format!("{e:?}").to_string()),
+            Err(e) => {
+                println!("{}", format!("{e:?}"));
+                return Result::Err(format!("{e:?}").to_string());
+            }
         }
     }
 }
@@ -62,7 +65,7 @@ mod tests {
         // Arrange
 
         // Server
-        let smtp_server_port = 2526;
+        let smtp_server_port = 2121;
         let smtp_server_mock = TcpServerMocker::new(smtp_server_port).unwrap();
         configure_smtp_server(&smtp_server_mock);
 
@@ -102,10 +105,11 @@ mod tests {
         // Assert
 
         println!("\nMessages received by server:");
-        while let Some(message) = smtp_server_mock.pop_received_message() {
-            println!("{}", String::from_utf8(message).unwrap());
-        }
+        // while let Some(message) = smtp_server_mock.pop_received_message() {
+        //     println!("{}", String::from_utf8(message).unwrap());
+        // }
 
+        //todo!("https://github.com/thomasarmel/socket-server-mocker/issues/6")
         assert!(send_email_result.is_ok());
 
         // Check that the server received the expected SMTP message
@@ -166,7 +170,10 @@ mod tests {
         assert!(Option::is_some(&mail_payload_lines.next()));
 
         // Email date
-        assert_eq!("", mail_payload_lines.next().unwrap());
+        assert!(Option::is_some(&mail_payload_lines.next()));
+
+        // Content
+        assert_eq!("", mail_payload_lines.next().unwrap()); // empty line before the content
         assert_eq!(text_content, mail_payload_lines.next().unwrap());
 
         //Last message line with only a dot "." is not returned by lines() method
