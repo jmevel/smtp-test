@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 validator = "0.16"
 lettre = { version = "0.10", features=["smtp-transport"] }
+openssl = { version = "0.10", features = ["vendored"] }
 
 [dev-dependencies]
 claims = "0.7"
