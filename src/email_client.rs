@@ -66,32 +66,6 @@ mod tests {
         let smtp_server_mock =
             configure_smtp_server(TcpServerMocker::new(smtp_server_port).unwrap());
 
-        // let email_builder = Message::builder()
-        //     .from(
-        //         "Alice Dupont <alice.dupont@localhost.mock>"
-        //             .parse()
-        //             .unwrap(),
-        //     )
-        //     .reply_to(
-        //         "Alice Dupont <alice.dupont@localhost.mock>"
-        //             .parse()
-        //             .unwrap(),
-        //     )
-        //     .to("Bob Dupond <bob.dupond@localhost.mock>".parse().unwrap())
-        //     .subject("Happy new year")
-        //     .body(String::from("Be happy!"))
-        //     .unwrap();
-
-        // // Mail client opens a remote connection on mocked SMTP server
-        // let mailer = SmtpTransport::relay("127.0.0.1")
-        //     .unwrap()
-        //     .tls(Tls::None)
-        //     .port(2525)
-        //     .timeout(Some(std::time::Duration::from_secs(1)))
-        //     .build();
-        // // Send the email
-        // mailer.send(&email_builder).unwrap();
-
         let from = Contact {
             name: Username().fake::<String>(),
             email: Email::parse(SafeEmail().fake::<String>()).unwrap(),
@@ -124,16 +98,22 @@ mod tests {
 
         // Act
         let send_email_result = email_client.send_email(&recipient, &subject, &text_content);
+        if  send_email_result.is_err(){
+            println!("ERROR");
+            let error_message = send_email_result.err().unwrap();
+            println!("{error_message}");
+        }
+        
 
-        // // Assert
+        // Assert
 
-        // println!("\nMessages received by server:");
-        // // while let Some(message) = smtp_server_mock.pop_received_message() {
-        // //     println!("{}", String::from_utf8(message).unwrap());
-        // // }
+        //println!("\nMessages received by server:");
+        // while let Some(message) = smtp_server_mock.pop_received_message() {
+        //     println!("{}", String::from_utf8(message).unwrap());
+        // }
 
-        // //todo!("https://github.com/thomasarmel/socket-server-mocker/issues/6")
-        // assert!(send_email_result.is_ok());
+        //todo!("https://github.com/thomasarmel/socket-server-mocker/issues/6")
+        assert!(send_email_result.is_ok());
 
         // // Check that the server received the expected SMTP message
         // assert_eq!(
